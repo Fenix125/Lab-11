@@ -1,4 +1,4 @@
-package com.lab11.task1;
+package com.lab.task1;
 
 import lombok.Getter;
 import lombok.ToString;
@@ -6,6 +6,6 @@ import lombok.experimental.SuperBuilder;
 
 @SuperBuilder @Getter @ToString
 public class Human {
-    private String FirstName;
-    private String LastName;
+    private String firstName;
+    private String lastName;
 }

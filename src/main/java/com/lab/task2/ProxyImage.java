@@ -1,4 +1,4 @@
-package com.lab11.task2;
+package com.lab.task2;
 
 public class ProxyImage implements MyImage{
     private RealImage realImage;

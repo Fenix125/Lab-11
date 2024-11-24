@@ -1,4 +1,4 @@
-package com.lab11.task1;
+package com.lab.task1;
 
 import java.util.List;
 
