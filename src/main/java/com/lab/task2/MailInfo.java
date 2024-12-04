@@ -11,4 +11,7 @@ public class MailInfo {
         //based on client info and mailCode
         return mailCode.generate(client);
     }
+    public String getClientEmail() {
+        return client.getEmail();
+    }
 }

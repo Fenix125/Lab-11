@@ -14,11 +14,11 @@ public class Client {
     private String name;
     private LocalDate dob;
     private String sex;
-    public Client(String name, LocalDate dob, String sex) {
+    private String email;
+    public Client(String name, LocalDate dob, String sex, String email) {
         this.name = name;
         this.dob = dob;
         this.sex = sex;
-    }
-
-    
+        this.email = email;
+    }   
 }

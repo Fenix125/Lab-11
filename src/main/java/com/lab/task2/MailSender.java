@@ -1,43 +1,50 @@
 package com.lab.task2;
 
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
-import java.util.Properties;
+import com.mailjet.client.ClientOptions;
+import com.mailjet.client.MailjetClient;
+import com.mailjet.client.MailjetRequest;
+import com.mailjet.client.MailjetResponse;
+import com.mailjet.client.resource.Emailv31;
+import lombok.AllArgsConstructor;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import javax.mail.*;
-import javax.mail.internet.*;
-
-
+@AllArgsConstructor
 public class MailSender {
-    public void sendMail(MailInfo mailInfo){
-        Properties props = new Properties();
-        props.put("mail.smtp.host", smtpHost); //enter your smtp Host id
-        props.put("mail.smtp.port", smtpPort); //enter your smtp Host id
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
+    private final String apiKey;
+    private final String apiSecret;
+    private final String fromEmail;
 
-        // Create a session with the required authentication
-        Session session = Session.getInstance(props, new javax.mail.Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(username, password); //Enter your usename and password
-            }
-        });
-
+    public void sendEmail(MailInfo info) {
         try {
-            // Create a new email message
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(username)); //Enter your usename
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse("ivasiuk.pn@ucu.edu.ua"));
-            message.setSubject("hello");
-            message.setText("hello");
+            // Set up Mailjet client
+            ClientOptions options =
+                ClientOptions.builder().apiKey(apiKey).apiSecretKey(apiSecret).build();
+            MailjetClient client = new MailjetClient(options);
 
-            // Send the email
-            Transport.send(message);
-            System.out.println("Email sent successfully.");
+            // Create email request
+            MailjetRequest request =
+                new MailjetRequest(
+                    Emailv31.resource)
+                        .property(Emailv31.MESSAGES,
+                            new JSONArray().put(new JSONObject()
+                                .put("From",
+                                    new JSONObject().put("Email", fromEmail).put("Name",
+                                    "ViktoKorneplod"))
+                                .put("To",
+                                    new JSONArray()
+                                    .put(new JSONObject().put("Email", info.getClientEmail())))
+                                .put("Subject", "ТЦК").put("HTMLPart", info.generate())));
 
-        } catch (MessagingException e) {
-            e.printStackTrace();
-            System.err.println("Error sending email: " + e.getMessage());
+            MailjetResponse response = client.post(request);
+        if (response.getStatus() == 200) {
+            System.out.println("Email sent successfully!");
+        } else {
+            System.err.println("Failed to send email. Status: " + response.getStatus());
+            System.err.println("Response: " + response.getData());
+        }
+        } catch (Exception e) {
+        System.err.println("Error while sending email: " + e.getMessage());
         }
     }
 }
